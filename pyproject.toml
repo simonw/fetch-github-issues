@@ -9,9 +9,6 @@ requires-python = ">=3.8"
 classifiers = [
     "License :: OSI Approved :: Apache Software License"
 ]
-dependencies = [
-    "click"
-]
 
 [project.urls]
 Homepage = "https://github.com/simonw/fetch-github-issues"
@@ -20,7 +17,7 @@ Issues = "https://github.com/simonw/fetch-github-issues/issues"
 CI = "https://github.com/simonw/fetch-github-issues/actions"
 
 [project.entry-points.console_scripts]
-fetch-github-issues = "fetch_github_issues.cli:cli"
+fetch-github-issues = "fetch_github_issues.cli:main"
 
 [project.optional-dependencies]
 test = ["pytest"]
