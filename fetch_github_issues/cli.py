@@ -2,6 +2,7 @@ import argparse
 import os
 import json
 import http.client
+import sys
 from typing import List, Optional, Tuple, Dict
 
 
@@ -106,9 +107,13 @@ def main():
 
     try:
         fetch_github_issues(args.repo, issue_numbers, args.output, args.key)
-        print(f"Issues fetched successfully. JSON files saved in {args.output}")
+        print(
+            f"Issues fetched successfully. JSON files saved in {args.output}",
+            file=sys.stderr,
+        )
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        print(f"An error occurred: {str(e)}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
