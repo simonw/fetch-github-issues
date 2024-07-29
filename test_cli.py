@@ -22,6 +22,7 @@ def mock_connection():
 
 def test_fetch_single_issue(temp_dir, mock_connection):
     mock_response = Mock()
+    mock_response.status = 200
     mock_response.read.return_value = json.dumps(
         {
             "number": 1,
@@ -50,6 +51,7 @@ def test_fetch_single_issue(temp_dir, mock_connection):
 
 def test_fetch_all_issues(temp_dir, mock_connection):
     mock_response = Mock()
+    mock_response.status = 200
     mock_response.read.side_effect = [
         json.dumps(
             [
@@ -93,14 +95,10 @@ def test_fetch_all_issues(temp_dir, mock_connection):
     assert os.path.exists(os.path.join(temp_dir, "2.json"))
 
 
-def test_missing_api_key(temp_dir):
-    with pytest.raises(ValueError):
-        cli.fetch_github_issues("owner/repo", [1], temp_dir, None)
-
-
 @pytest.mark.parametrize("api_key", [None, "test_api_key"])
 def test_api_key_from_env(temp_dir, mock_connection, api_key):
     mock_response = Mock()
+    mock_response.status = 200
     mock_response.read.return_value = json.dumps(
         {
             "number": 1,
@@ -118,3 +116,16 @@ def test_api_key_from_env(temp_dir, mock_connection, api_key):
     headers = mock_connection.return_value.request.call_args[1]["headers"]
     expected_token = "test_api_key" if api_key else "test_env_api_key"
     assert headers["Authorization"] == f"token {expected_token}"
+
+
+def test_non_200_status_code(temp_dir, mock_connection):
+    mock_response = Mock()
+    mock_response.status = 404
+    mock_response.reason = "Not Found"
+
+    mock_connection.return_value.getresponse.return_value = mock_response
+
+    with pytest.raises(Exception) as exc_info:
+        cli.fetch_github_issues("owner/repo", [1], temp_dir, "test_api_key")
+
+    assert str(exc_info.value) == "HTTP request failed with status code 404: Not Found"

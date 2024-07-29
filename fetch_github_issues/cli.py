@@ -14,6 +14,12 @@ def make_request(
 ) -> Tuple[Dict, Optional[str]]:
     conn.request(method, url, headers=headers)
     response = conn.getresponse()
+
+    if response.status != 200:
+        raise Exception(
+            f"HTTP request failed with status code {response.status}: {response.reason}"
+        )
+
     data = json.loads(response.read().decode())
     next_url = None
     for link in response.getheader("Link", "").split(", "):
@@ -61,18 +67,21 @@ def fetch_github_issues(
     conn = create_connection()
     base_path = f"/repos/{repo}/issues"
 
-    if issue_numbers:
-        for number in issue_numbers:
-            issue_data, _ = make_request(conn, "GET", f"{base_path}/{number}", headers)
-            comments = fetch_all_pages(conn, issue_data["comments_url"], headers)
-            save_issue_data(issue_data, comments, output_dir)
-    else:
-        all_issues = fetch_all_pages(conn, base_path, headers)
-        for issue in all_issues:
-            comments = fetch_all_pages(conn, issue["comments_url"], headers)
-            save_issue_data(issue, comments, output_dir)
-
-    conn.close()
+    try:
+        if issue_numbers:
+            for number in issue_numbers:
+                issue_data, _ = make_request(
+                    conn, "GET", f"{base_path}/{number}", headers
+                )
+                comments = fetch_all_pages(conn, issue_data["comments_url"], headers)
+                save_issue_data(issue_data, comments, output_dir)
+        else:
+            all_issues = fetch_all_pages(conn, base_path, headers)
+            for issue in all_issues:
+                comments = fetch_all_pages(conn, issue["comments_url"], headers)
+                save_issue_data(issue, comments, output_dir)
+    finally:
+        conn.close()
 
 
 def main():
