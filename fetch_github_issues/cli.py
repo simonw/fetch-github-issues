@@ -77,7 +77,7 @@ def fetch_github_issues(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Fetch GitHub issues and their comments."
+        description="Fetch all GitHub issues for a repository and save them as JSON"
     )
     parser.add_argument("repo", help="GitHub repository in the format owner/repo")
     parser.add_argument(

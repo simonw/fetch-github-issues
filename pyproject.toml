@@ -1,7 +1,7 @@
 [project]
 name = "fetch-github-issues"
 version = "0.1"
-description = "Fetch all GitHub issues for a repository"
+description = "Fetch all GitHub issues for a repository and save them as JSON"
 readme = "README.md"
 authors = [{name = "Simon Willison"}]
 license = {text = "Apache-2.0"}
