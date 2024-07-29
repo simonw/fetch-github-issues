@@ -1,0 +1,26 @@
+[project]
+name = "fetch-github-issues"
+version = "0.1"
+description = "Fetch all GitHub issues for a repository"
+readme = "README.md"
+authors = [{name = "Simon Willison"}]
+license = {text = "Apache-2.0"}
+requires-python = ">=3.8"
+classifiers = [
+    "License :: OSI Approved :: Apache Software License"
+]
+dependencies = [
+    "click"
+]
+
+[project.urls]
+Homepage = "https://github.com/simonw/fetch-github-issues"
+Changelog = "https://github.com/simonw/fetch-github-issues/releases"
+Issues = "https://github.com/simonw/fetch-github-issues/issues"
+CI = "https://github.com/simonw/fetch-github-issues/actions"
+
+[project.entry-points.console_scripts]
+fetch-github-issues = "fetch_github_issues.cli:cli"
+
+[project.optional-dependencies]
+test = ["pytest"]
